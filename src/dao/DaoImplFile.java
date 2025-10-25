@@ -100,6 +100,7 @@ public class DaoImplFile implements Dao {
 		// define file name based on date
 		LocalDate myObj = LocalDate.now();
 		String fileName = "inventory_" + myObj.toString() + ".txt";
+		
 
 		// locate file, path and name
 		File f = new File(System.getProperty("user.dir") + File.separator + "files" + File.separator + fileName);
@@ -114,28 +115,28 @@ public class DaoImplFile implements Dao {
 			int counterProduct = 1;
 
 			for (Product product : inventory) {
-				StringBuilder firstLine = new StringBuilder(
-						counterProduct + ";Product:" + product.getName() + ";Stock=" + product.getStock() + ";");
+				StringBuilder firstLine = new StringBuilder(counterProduct + ";Product:" + product.getName() + ";Stock=" + product.getStock() + ";");
 				pw.write(firstLine.toString());
-				fw.write("\n");
-
-				StringBuilder thirdLine = new StringBuilder(
-						"Total number of products:" + product.getTotalProducts() + ";");
-				pw.write(thirdLine.toString());
 				fw.write("\n");
 
 				counterProduct++;
 			}
+			
+			StringBuilder thirdLine = new StringBuilder(
+					"Total number of products:" + Product.getTotalProducts() + ";");
+			pw.write(thirdLine.toString());
+			fw.write("\n");
+			
 			// close files
 			pw.close();
 			fw.close();
 			
 			return true;
-
+			
 		} catch (IOException e) {
 			e.printStackTrace();
+			return false;
 		}
-		return false;
 	}
 
 	@Override

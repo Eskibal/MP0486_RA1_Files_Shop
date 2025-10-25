@@ -58,8 +58,10 @@ public class Shop {
 	public void setInventory(ArrayList<Product> inventory) {
 		this.inventory = inventory;
 	}
-
-
+	
+	public boolean writeInventory() {
+		return dao.writeInventory(inventory);
+	}
 
 	public int getNumberProducts() {
 		return numberProducts;
@@ -223,9 +225,6 @@ public class Shop {
 		
 	}
 	
-	private boolean writeInventory() {
-		return dao.writeInventory(inventory);
-	}
 	
 	/**
 	 * show current total cash
