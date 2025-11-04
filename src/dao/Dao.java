@@ -12,8 +12,13 @@ public interface Dao {
 	public ArrayList<Product> getInventory();
 	
 	public boolean writeInventory(ArrayList<Product> list);
-	
 
+	public void addProduct(Product product);
+	
+	public void updateProduct(Product product);
+	
+	public void deleteProduct(int id);
+	
 	public Employee getEmployee(int employeeId, String password);
 	
 	public void disconnect();
