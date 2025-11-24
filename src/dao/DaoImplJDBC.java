@@ -114,13 +114,27 @@ public class DaoImplJDBC implements Dao {
 
 	@Override
 	public void updateProduct(Product product) {
-		// TODO Auto-generated method stub
+		String query = "update inventory set stock = ? where name = ?";
 		
+		try (PreparedStatement ps = conn.prepareStatement(query)) {
+			ps.setInt(1, product.getStock());
+			ps.setString(2, product.getName());
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
-	public void deleteProduct(int id) {
-		// TODO Auto-generated method stub
+	public void deleteProduct(int productId) {
+		String query = "delete from inventory where id = ?";
+		
+		try (PreparedStatement ps = conn.prepareStatement(query)) {
+			ps.setInt(1, productId);
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		
 	}
 	@Override

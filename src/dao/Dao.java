@@ -17,7 +17,7 @@ public interface Dao {
 	
 	public void updateProduct(Product product);
 	
-	public void deleteProduct(int id);
+	public void deleteProduct(int productId);
 	
 	public Employee getEmployee(int employeeId, String password);
 	

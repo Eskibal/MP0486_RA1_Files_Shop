@@ -125,7 +125,7 @@ public class ShopView extends JFrame implements ActionListener, KeyListener{
 		// listen button
 		btnAddStock.addActionListener(this);
 
-		// option add product
+		// option remove product
 		btnRemoveProduct = new JButton("9. Eliminar producto");
 		btnRemoveProduct.setHorizontalAlignment(SwingConstants.LEFT);
 		btnRemoveProduct.setFont(new Font("Tahoma", Font.PLAIN, 15));
