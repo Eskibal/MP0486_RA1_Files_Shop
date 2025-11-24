@@ -8,11 +8,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import model.Amount;
 import model.Employee;
 import model.Product;
 
 public class DaoImplJDBC implements Dao {
-	Connection connection;
+	Connection conn;
 
 	@Override
 	public void connect() {
@@ -21,7 +22,7 @@ public class DaoImplJDBC implements Dao {
 		String user = "root";
 		String pass = "";
 		try {
-			this.connection = DriverManager.getConnection(url, user, pass);
+			conn = DriverManager.getConnection(url, user, pass);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -29,26 +30,57 @@ public class DaoImplJDBC implements Dao {
 
 	}
 
+
+
 	@Override
-	public void disconnect() {
-		// TODO Auto-generated method stub
-		if (connection != null) {
-			try {
-				connection.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+	public ArrayList<Product> getInventory() {
+		ArrayList<Product> inventory = new ArrayList<Product>();
+
+		String query = "select * from inventory";
+		try (Statement stmt = conn.createStatement()) {
+			try (ResultSet rs = stmt.executeQuery(query)) {
+				while (rs.next()) {
+					inventory.add(new Product(rs.getString("name"), new Amount(rs.getDouble("wholesalerPrice")), rs.getBoolean("available"), rs.getInt("stock")));
+				}
 			}
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
 		}
 		
+		return inventory;
 	}
-
+	
+	@Override
+	public boolean writeInventory(ArrayList<Product> inventory) {
+		int counterProduct = 1;
+		String query = "insert into historical_inventory (id_product, name, wholesalerPrice, available, stock, created_at) values (?, ?, ?, ?, ?, now())";
+		
+		try (PreparedStatement ps = conn.prepareStatement(query)) {
+			for (Product product : inventory) {
+				ps.setInt(1, counterProduct);
+				ps.setString(2, product.getName());
+				ps.setDouble(3, product.getWholesalerPrice().getValue());
+				ps.setBoolean(4, product.isAvailable());
+				ps.setInt(5, product.getStock());
+				ps.addBatch();
+				
+				counterProduct++;
+			}
+			ps.executeBatch();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
 	@Override
 	public Employee getEmployee(int employeeId, String password) {
 		Employee employee = null;
 		String query = "select * from employee where employeeId= ? and password = ? ";
 		
-		try (PreparedStatement ps = connection.prepareStatement(query)) { 
+		try (PreparedStatement ps = conn.prepareStatement(query)) { 
     		ps.setInt(1,employeeId);
     	  	ps.setString(2,password);
     	  	//System.out.println(ps.toString());
@@ -65,21 +97,19 @@ public class DaoImplJDBC implements Dao {
 	}
 
 	@Override
-	public ArrayList<Product> getInventory() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean writeInventory(ArrayList<Product> list) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public void addProduct(Product product) {
-		// TODO Auto-generated method stub
+		String query = "insert into inventory (name, wholesalerPrice, available, stock) values (?, ?, ?, ?)";
 		
+		try (PreparedStatement ps = conn.prepareStatement(query)) {
+			ps.setString(1, product.getName());
+			ps.setDouble(2, product.getWholesalerPrice().getValue());
+			ps.setBoolean(3, true);
+			ps.setInt(4, product.getStock());
+			ps.addBatch();
+			ps.executeBatch();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -91,6 +121,19 @@ public class DaoImplJDBC implements Dao {
 	@Override
 	public void deleteProduct(int id) {
 		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void disconnect() {
+		// TODO Auto-generated method stub
+		if (conn != null) {
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		
 	}
 

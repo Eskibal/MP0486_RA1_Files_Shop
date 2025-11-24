@@ -17,7 +17,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import dao.DaoImplFile;
+// import dao.DaoImplFile;
+import dao.DaoImplJDBC;
 
 public class Shop {
 	private Amount cash = new Amount(100.00);
@@ -27,18 +28,18 @@ public class Shop {
 //	private Sale[] sales;
 	private ArrayList<Sale> sales;
 	private int numberSales;
-	private DaoImplFile dao;
+//	private DaoImplFile dao;
+	private DaoImplJDBC dao;
 
 	final static double TAX_RATE = 1.04;
 
 	public Shop() {
-		dao = new DaoImplFile();
+//		dao = new DaoImplFile();
+		dao = new DaoImplJDBC();
 		inventory = new ArrayList<Product>();
 		sales = new ArrayList<Sale>();
 	}
 	
-	
-
 	public Amount getCash() {
 		return cash;
 	}
@@ -205,11 +206,12 @@ public class Shop {
 	 * load initial inventory to shop
 	 */
 	public void loadInventory() {
+		dao.connect();
 //		addProduct(new Product("Manzana", new Amount(10.00), true, 10));
 //		addProduct(new Product("Pera", new Amount(20.00), true, 20));
 //		addProduct(new Product("Hamburguesa", new Amount(30.00), true, 30));
 //		addProduct(new Product("Fresa", new Amount(5.00), true, 20));
-		// now read from file
+		// now read from database
 		this.readInventory();
 		
 		// show inventory
@@ -218,15 +220,14 @@ public class Shop {
 	}
 
 	/**
-	 * read inventory from file
+	 * read inventory from database
 	 */
 	private void readInventory() {
 		inventory = dao.getInventory();
 		
 	}
 	
-	
-	/**
+		/**
 	 * show current total cash
 	 */
 	private void showCash() {
@@ -490,7 +491,7 @@ public class Shop {
 			System.out.println("No se pueden añadir más productos, se ha alcanzado el máximo de " + inventory.size());
 			return;
 		}
-		inventory.add(product);
+		dao.addProduct(product);
 		numberProducts++;
 	}
 	
