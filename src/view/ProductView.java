@@ -220,7 +220,7 @@ public class ProductView extends JDialog implements ActionListener {
 				product = shop.findProduct(textFieldName.getText());
 				int productId = (int) spinnerId.getModel().getValue();
 				
-				if (product == null) {
+				if (product == null && productId == 0) {
 					JOptionPane.showMessageDialog(null, "Producto no existe ", "Error", JOptionPane.ERROR_MESSAGE);
 
 				} else {
